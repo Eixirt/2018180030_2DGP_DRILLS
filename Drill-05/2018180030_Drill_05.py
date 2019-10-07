@@ -20,7 +20,9 @@ goto_x = 500
 goto_y = 500
 cnt = 0
 
+is_right = True
 is_moving = False
+
 
 def handle_events():
     global running
@@ -45,6 +47,7 @@ def moving_character():
     global goto_x, goto_y
     global player_x, player_y
     global is_moving
+    global is_right
     global frame_x, frame_y
     global cnt
 
@@ -54,8 +57,18 @@ def moving_character():
         player_x = (1 - t) * player_x + t * goto_x
         player_y = (1 - t) * player_y + t * goto_y
         cnt += 2
+        if player_x - goto_x > 0:
+            is_right = False
+            frame_y = 0
+        else:
+            is_right = True
+            frame_y = 1
     else:
         is_moving = False
+        if is_right:
+            frame_y = 1
+        else:
+            frame_y = 0
 
 
 pico2d.hide_cursor()

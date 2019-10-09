@@ -106,7 +106,7 @@ prepare_turtle_canvas()
 # draw_curve_3_points((-350, -100), (-50, 200), (150, -100))
 # draw_curve_3_points((-50, 200), (150, -100), (350, 300))
 
-draw_curve_4_points((-350, -100), (-50, 200), (150, -100), (350, 300))
+draw_curve_4_points((-300, 200), (400, 350), (300, -300), (-200, -200))
 
 
 turtle.done()

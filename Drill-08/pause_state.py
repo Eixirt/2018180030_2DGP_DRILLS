@@ -4,6 +4,9 @@ import game_framework
 
 name = "PauseState"
 image = None
+blink_time = 0
+image_width = 0
+image_height = 0
 
 def enter():
     global image
@@ -37,11 +40,26 @@ def handle_events():
 
 
 def update():
+    global blink_time
+    global image
+    global image_width, image_height
+
+    if blink_time >= 0.25:
+        blink_time = 0
+        if image_width == 0:
+            image_width = image.w
+            image_height = image.h
+        else:
+            image_width = 0
+            image_height = 0
+
+    delay(0.01)
+    blink_time += 0.01
     pass
 
 
 def draw():
     clear_canvas()
-    image.draw(400, 300, image.w / 4, image.h / 4)
+    image.draw(400, 300, image_width / 4, image_height / 4)
     update_canvas()
     pass

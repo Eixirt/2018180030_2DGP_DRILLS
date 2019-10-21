@@ -1,7 +1,6 @@
 from pico2d import *
 
 import game_framework
-import main_state
 
 name = "PauseState"
 image = None
@@ -11,10 +10,7 @@ image_height = 0
 
 def enter():
     global image
-    global image_width, image_height
     image = load_image('pause.png')
-    image_width = image.w
-    image_height = image.h
     pass
 
 
@@ -25,14 +21,10 @@ def exit():
 
 
 def pause():
-    global blink_time
-    blink_time = 0
     pass
 
 
 def resume():
-    global blink_time
-    blink_time = 0
     pass
 
 
@@ -68,9 +60,6 @@ def update():
 
 def draw():
     clear_canvas()
-    main_state.boy.draw()
-    main_state.grass.draw()
     image.draw(400, 300, image_width / 4, image_height / 4)
-
     update_canvas()
     pass

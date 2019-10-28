@@ -135,11 +135,12 @@ class DashState:
 next_state_table = {
     #  fill here
     IdleState: {RIGHT_UP: RunState, LEFT_UP: RunState,
-                RIGHT_DOWN: RunState, LEFT_DOWN: RunState, SLEEP_TIMER: SleepState, SHIFT_DOWN: DashState},
+                RIGHT_DOWN: RunState, LEFT_DOWN: RunState, SLEEP_TIMER: SleepState,
+                SHIFT_DOWN: DashState, SHIFT_UP: RunState},
     RunState: {RIGHT_UP: IdleState, LEFT_UP: IdleState,
-               LEFT_DOWN: IdleState, RIGHT_DOWN: IdleState, SHIFT_DOWN: DashState, SHIFT_UP: DashState},
+               LEFT_DOWN: IdleState, RIGHT_DOWN: IdleState, SHIFT_DOWN: DashState, SHIFT_UP: RunState},
     SleepState: {RIGHT_UP: RunState, LEFT_UP: RunState,
-                 RIGHT_DOWN: RunState, LEFT_DOWN: RunState, SHIFT_DOWN: DashState, SHIFT_UP: DashState},
+                 RIGHT_DOWN: RunState, LEFT_DOWN: RunState, SHIFT_DOWN: DashState, SHIFT_UP: RunState},
     DashState: {SHIFT_UP: RunState, RIGHT_UP: RunState, LEFT_UP: RunState,
                 RIGHT_DOWN: RunState, LEFT_DOWN: RunState, DASH_TIMER: RunState}
 }

@@ -20,11 +20,13 @@ class Bird:
         pass
 
     def update(self):
+        self.frame = (self.frame + 1) % 14
         pass
 
     def draw(self):
-        self.image.clip_composite_draw(int(self.frame) * 184, self.image.h - int(2 - self.frame % 3) * 184,
-                                       184, 184, 0, '', 400, 300, 184, 184)
+        print(self.frame)
+        self.image.clip_composite_draw(int(self.frame % 5) * 181, self.image.h - 181 * (1 + int(self.frame // 5)),
+                                       184, 184, 0, '', 400, 300)
         pass
     pass
 
@@ -45,8 +47,9 @@ while running:
     pico2d.clear_canvas()
 
     handle_events()
-
+    bird.update()
     bird.draw()
     pico2d.update_canvas()
+    pico2d.delay(0.5)
 
 pico2d.close_canvas()

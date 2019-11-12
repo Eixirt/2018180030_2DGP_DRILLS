@@ -1,55 +1,54 @@
 import pico2d
-import time
+import game_framework
+import game_world
 
-frame_time = 0.0
+PIXEL_PER_METER = (10.0 / 0.2)  # 10 pixel = 20 cm
+RUN_SPEED_KMPH = 32.0
+RUN_SPEED_MPM = (RUN_SPEED_KMPH * 1000.0 / 60.0)
+RUN_SPEED_MPS = (RUN_SPEED_MPM / 60.0)
+RUN_SPEED_PPS = (RUN_SPEED_MPS * PIXEL_PER_METER)
 
-PIXEL_PER_METER = (10.0 / 0.1)  # 10 pixel = 10 cm
 
-pico2d.open_canvas(800, 600)
-
-running = True
+TIME_PER_ACTION = 1.0
+ACTION_PER_TIME = 1.0 / TIME_PER_ACTION
+FRAMES_PER_ACTION = 14
 
 
 class Bird:
-    BIRD_PIXEL_WIDTH = 184
-    BIRD_PIXEL_HEIGHT = 184
+    BIRD_PIXEL_WIDTH = 180
+    BIRD_PIXEL_HEIGHT = 160
+
     def __init__(self):
         self.image = pico2d.load_image('bird_animation.png')
         self.dir = 1
         self.frame = 0
+        self.x, self.y = 400, 300
+        self.velocity = RUN_SPEED_PPS
         pass
 
     def update(self):
-        self.frame = (self.frame + 1) % 14
+        self.frame = (self.frame + FRAMES_PER_ACTION * ACTION_PER_TIME * game_framework.frame_time) % 14
+        self.x += self.velocity * game_framework.frame_time
+        if self.x >= 910:
+            self.velocity = -RUN_SPEED_PPS
+
+        elif self.x <= 90:
+            self.velocity = RUN_SPEED_PPS
+
+        self.dir = pico2d.clamp(-1, self.velocity, 1)
         pass
 
     def draw(self):
-        print(self.frame)
-        self.image.clip_composite_draw(int(self.frame % 5) * 181, self.image.h - 181 * (1 + int(self.frame // 5)),
-                                       184, 184, 0, '', 400, 300)
+        if self.dir == 1:
+            self.image.clip_composite_draw(int(self.frame % 5) * 183,
+                                           self.image.h - 168 * (1 + int(self.frame // 5)),
+                                           180, 160, 0, '', self.x, self.y,
+                                           Bird.BIRD_PIXEL_WIDTH, Bird.BIRD_PIXEL_HEIGHT)
+        elif self.dir == -1:
+            self.image.clip_composite_draw(int(self.frame % 5) * 183,
+                                           self.image.h - 168 * (1 + int(self.frame // 5)),
+                                           180, 160, 0, 'h', self.x, self.y,
+                                           Bird.BIRD_PIXEL_WIDTH, Bird.BIRD_PIXEL_HEIGHT)
         pass
+
     pass
-
-
-def handle_events():
-    global running
-    events = pico2d.get_events()
-    for event in events:
-        if event.type == pico2d.SDL_KEYDOWN and event.key == pico2d.SDLK_ESCAPE:
-            running = False
-    pass
-
-
-bird = Bird()
-
-
-while running:
-    pico2d.clear_canvas()
-
-    handle_events()
-    bird.update()
-    bird.draw()
-    pico2d.update_canvas()
-    pico2d.delay(0.5)
-
-pico2d.close_canvas()

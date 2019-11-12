@@ -2,6 +2,7 @@ import random
 from pico2d import *
 import game_world
 import game_framework
+from brick import Brick
 
 
 class Ball:
@@ -32,8 +33,8 @@ class Ball:
 # fill here
 # class BigBall
 class BigBall(Ball):
-    MIN_FALL_SPEED = 50  # 50 pps = 1.5 meter per sec
-    MAX_FALL_SPEED = 200 # 200 pps = 6 meter per sec
+    MIN_FALL_SPEED = 50   # 50 pps = 1.5 meter per sec
+    MAX_FALL_SPEED = 200  # 200 pps = 6 meter per sec
     image = None
 
     def __init__(self):

@@ -94,6 +94,10 @@ def update():
         if collide(grass, ball):
             ball.stop()
 
+        if collide(brick, ball):
+            ball.stop()
+            ball.x -= brick.dir * brick.velocity * game_framework.frame_time
+
     pass
 
 

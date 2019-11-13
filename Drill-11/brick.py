@@ -12,6 +12,7 @@ class Brick:
             Brick.image = load_image('brick180x40.png')
         self.x, self.y, self.velocity = random.randint(200, 1300-1), 150, 300
         self.dir = 1
+        self.moving_interval = 0
 
     def get_bb(self):
         # fill here
@@ -24,9 +25,12 @@ class Brick:
         draw_rectangle(*self.get_bb())
 
     def update(self):
-        self.x -= self.dir * self.velocity * game_framework.frame_time
-        if self.x > 1300 - 1 or self.x < 200:
+        self.moving_interval = self.dir * self.velocity * game_framework.frame_time
+        if (self.x - self.moving_interval) > 1300 - 1 or (self.x - self.moving_interval) < 200:
             self.dir = -self.dir
+            self.x -= self.moving_interval
+        else:
+            self.x -= self.moving_interval
 
     # fill here for def stop
     def stop(self):

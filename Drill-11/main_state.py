@@ -37,6 +37,21 @@ def collide(a, b):
     return True
 
 
+def collide_block(block, obj):
+    block_bb = {'left': block.get_bb()[0], 'bottom': block.get_bb()[1],
+                'right': block.get_bb()[2], 'top': block.get_bb()[3]}
+    obj_bb = {'left': obj.get_bb()[0], 'bottom': obj.get_bb()[1],
+              'right': obj.get_bb()[2], 'top': obj.get_bb()[3]}
+
+    if block_bb['top'] - 5 < obj_bb['bottom'] < block_bb['top'] and \
+            obj_bb['left'] < block_bb['right'] and obj_bb['right'] > block_bb['left']:
+        obj.y = block_bb['top'] + 19
+        return True
+        pass
+    return False
+    pass
+
+
 def enter():
     global boy
     boy = Boy()
@@ -94,9 +109,11 @@ def update():
         if collide(grass, ball):
             ball.stop()
 
-        if collide(brick, ball):
+        brick.x += brick.moving_interval
+        if collide_block(brick, ball):
             ball.stop()
-            ball.x -= brick.dir * brick.velocity * game_framework.frame_time
+            ball.x -= brick.moving_interval
+        brick.x -= brick.moving_interval
 
     pass
 

@@ -16,6 +16,11 @@ TIME_PER_ACTION = 0.5
 ACTION_PER_TIME = 1.0 / TIME_PER_ACTION
 FRAMES_PER_ACTION = 8
 
+# Boy Jump Action
+TIME_PER_JUMP = 2
+JUMP_PER_TIME = 1.0 / TIME_PER_JUMP
+JUMP_GRAVITY_ACCELERATION = 10
+MAX_JUMPING_HEIGHT = 100
 
 # Boy Event
 RIGHT_DOWN, LEFT_DOWN, RIGHT_UP, LEFT_UP, SLEEP_TIMER, SPACE = range(6)
@@ -48,7 +53,8 @@ class IdleState:
     @staticmethod
     def exit(boy, event):
         if event == SPACE:
-            boy.fire_ball()
+            print('check')
+            pass
         pass
 
     @staticmethod
@@ -83,7 +89,9 @@ class RunState:
     @staticmethod
     def exit(boy, event):
         if event == SPACE:
-            boy.fire_ball()
+            print('check')
+            pass
+        pass
 
     @staticmethod
     def do(boy):
@@ -146,13 +154,15 @@ class Boy:
         self.cur_state = IdleState
         self.cur_state.enter(self, None)
 
+        # for jump
+        self.curr_jumping_height = 0
+
     def get_bb(self):
         # fill here
         return self.x - 50, self.y - 50, self.x + 50, self.y + 50
 
-    def fire_ball(self):
-        ball = Ball(self.x, self.y, self.dir * RUN_SPEED_PPS * 10)
-        game_world.add_object(ball, 1)
+    def jump(self):
+        pass
 
     def add_event(self, event):
         self.event_que.insert(0, event)

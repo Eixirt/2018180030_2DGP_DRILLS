@@ -6,7 +6,7 @@ import game_world
 
 # Boy Run Speed
 PIXEL_PER_METER = (10.0 / 0.3)  # 10 pixel 30 cm
-RUN_SPEED_KMPH = 20.0  # Km / Hour
+RUN_SPEED_KMPH = 40.0  # Km / Hour
 RUN_SPEED_MPM = (RUN_SPEED_KMPH * 1000.0 / 60.0)
 RUN_SPEED_MPS = (RUN_SPEED_MPM / 60.0)
 RUN_SPEED_PPS = (RUN_SPEED_MPS * PIXEL_PER_METER)
@@ -20,7 +20,6 @@ FRAMES_PER_ACTION = 8
 TIME_PER_JUMP = 2
 JUMP_PER_TIME = 1.0 / TIME_PER_JUMP
 JUMP_GRAVITY_ACCELERATION = 9.8
-JUMPING_POWER = 15.0
 
 # Boy Event
 RIGHT_DOWN, LEFT_DOWN, RIGHT_UP, LEFT_UP, SLEEP_TIMER, SPACE = range(6)
@@ -53,7 +52,7 @@ class IdleState:
     @staticmethod
     def exit(boy, event):
         if event == SPACE:
-            boy.is_jumping = True
+            boy.init_jump()
             pass
         pass
 
@@ -89,7 +88,7 @@ class RunState:
     @staticmethod
     def exit(boy, event):
         if event == SPACE:
-            boy.is_jumping = True
+            boy.init_jump()
             pass
         pass
 
@@ -148,19 +147,38 @@ class Boy:
         self.velocity = 0
         self.frame = 0
         self.event_que = []
+        self.init_state = IdleState
         self.cur_state = IdleState
         self.cur_state.enter(self, None)
 
         # for jump
         self.is_jumping = False
-        self.curr_jumping_height = 0
+        self.starting_pos_y = self.y  # 점프 전 초기 위치
+        self.start_jumping_time = 0.0
+        self.jumping_power = 10.0
+        self.jumping_height = 0
 
     def get_bb(self):
         # fill here
         return self.x - 50, self.y - 50, self.x + 50, self.y + 50
 
+    def init_jump(self):
+        if self.is_jumping is False:
+            print('jump')
+            self.is_jumping = True
+            self.starting_pos_y = self.y
+            self.start_jumping_time = get_time()
+            self.jumping_power = 10.0
+            self.jumping_height = 0
+        pass
+
     def jump(self):
-        self.curr_jumping_height = self.curr_jumping_height
+        jump_time = get_time() - self.start_jumping_time
+        self.jumping_height = jump_time * jump_time * (-JUMP_GRAVITY_ACCELERATION) + jump_time * self.jumping_power
+        self.y += self.jumping_height
+        if self.y < self.starting_pos_y:
+            self.is_jumping = False
+            self.y = self.starting_pos_y
         pass
 
     def fire_ball(self):
@@ -177,6 +195,10 @@ class Boy:
             self.cur_state.exit(self, event)
             self.cur_state = next_state_table[self.cur_state][event]
             self.cur_state.enter(self, event)
+
+        if self.is_jumping is True:
+            self.jump()
+            pass
 
     def draw(self):
         self.cur_state.draw(self)

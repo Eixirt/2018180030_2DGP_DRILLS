@@ -130,7 +130,31 @@ def update():
             elif ball.get_bb()[2] > brick.get_bb()[2]:
                 ball.x = brick.get_bb()[2] + ball.image.w / 2 + 15
                 pass
+        pass
+    # 플레이어와 벽돌 충돌체크
+    if collide(brick, boy):
+        if (collided_rect[1] + collided_rect[3]) / 2 < (brick.get_bb()[1] + brick.get_bb()[3]) / 2:
+            boy.jumping_power = 0
+            pass
+        elif boy.starting_pos_y == brick.get_bb()[3] + 100 / 2 - 3 and boy.jumping_height >= 0:
+            boy.init_jump()
+            boy.y += 4 
+            boy.starting_pos_y = 90
+            boy.jump()
+            pass
+        else:
+            boy.is_jumping = False
+            boy.y = brick.get_bb()[3] + 100 / 2 - 3
+            if boy.cur_state == boy.init_state:
+                boy.x -= brick.moving_interval
+        pass
 
+    if not collide(grass, boy):
+        if not collide(brick, boy) and boy.is_jumping is False:
+            boy.init_jump()
+            boy.jumping_power = 0
+            boy.starting_pos_y = 90
+            pass
     pass
 
 

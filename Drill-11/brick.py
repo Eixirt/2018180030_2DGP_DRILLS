@@ -10,7 +10,7 @@ class Brick:
     def __init__(self):
         if Brick.image is None:
             Brick.image = load_image('brick180x40.png')
-        self.x, self.y, self.velocity = random.randint(200, 1300-1), 150, 300
+        self.x, self.y, self.velocity = random.randint(200, 1300-1), 200, 300
         self.dir = 1
         self.moving_interval = 0
 

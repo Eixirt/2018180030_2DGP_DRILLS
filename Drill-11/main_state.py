@@ -18,6 +18,7 @@ grass = None
 brick = None
 balls = []
 big_balls = []
+collided_rect = [0, 0, 0, 0]
 
 
 def collide(a, b):
@@ -33,6 +34,13 @@ def collide(a, b):
         return False
     if bottom_a > top_b:
         return False
+
+    # 충돌 영역 구하기
+    collided_rect[0] = max(left_a, left_b)
+    collided_rect[2] = min(right_a, right_b)
+
+    collided_rect[1] = max(bottom_a, bottom_b)
+    collided_rect[3] = min(top_a, top_b)
 
     return True
 
@@ -109,11 +117,19 @@ def update():
         if collide(grass, ball):
             ball.stop()
 
-        brick.x += brick.moving_interval
-        if collide_block(brick, ball):
-            ball.stop()
-            ball.x -= brick.moving_interval
-        brick.x -= brick.moving_interval
+        if collide(brick, ball):
+            if abs(collided_rect[0] - collided_rect[2]) > abs(collided_rect[1] - collided_rect[3]) \
+                    and (brick.y < ball.y):
+                # ball.stop()
+                ball.y = brick.get_bb()[3] + ball.image.h / 2 - 3
+                ball.x -= brick.moving_interval
+                pass
+            elif ball.get_bb()[0] < brick.get_bb()[0]:
+                ball.x = brick.get_bb()[0] - ball.image.w / 2 - 15
+                pass
+            elif ball.get_bb()[2] > brick.get_bb()[2]:
+                ball.x = brick.get_bb()[2] + ball.image.w / 2 + 15
+                pass
 
     pass
 

@@ -11,7 +11,7 @@ class Ball:
     def __init__(self):
         if Ball.image is None:
             Ball.image = load_image('ball21x21.png')
-        self.x, self.y, self.fall_speed = random.randint(0, 1600-1), 60, 0
+        self.x, self.y, self.fall_speed = random.randint(200, 1100-1), 60, 0
 
     def get_bb(self):
         # fill here
@@ -45,6 +45,6 @@ class BigBall(Ball):
         self.fall_speed = random.randint(BigBall.MIN_FALL_SPEED, BigBall.MAX_FALL_SPEED)
 
     def get_bb(self):
-        return self.x - 20, self.y - 20, self.x + 20, self.y + 2
+        return self.x - 20, self.y - 20, self.x + 20, self.y + 20
 
     pass

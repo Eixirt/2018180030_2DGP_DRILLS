@@ -19,8 +19,8 @@ FRAMES_PER_ACTION = 8
 # Boy Jump Action
 TIME_PER_JUMP = 2
 JUMP_PER_TIME = 1.0 / TIME_PER_JUMP
-JUMP_GRAVITY_ACCELERATION = 10
-MAX_JUMPING_HEIGHT = 100
+JUMP_GRAVITY_ACCELERATION = 9.8
+JUMPING_POWER = 15.0
 
 # Boy Event
 RIGHT_DOWN, LEFT_DOWN, RIGHT_UP, LEFT_UP, SLEEP_TIMER, SPACE = range(6)
@@ -53,7 +53,7 @@ class IdleState:
     @staticmethod
     def exit(boy, event):
         if event == SPACE:
-            print('check')
+            boy.is_jumping = True
             pass
         pass
 
@@ -89,13 +89,13 @@ class RunState:
     @staticmethod
     def exit(boy, event):
         if event == SPACE:
-            print('check')
+            boy.is_jumping = True
             pass
         pass
 
     @staticmethod
     def do(boy):
-        #boy.frame = (boy.frame + 1) % 8
+        # boy.frame = (boy.frame + 1) % 8
         boy.frame = (boy.frame + FRAMES_PER_ACTION * ACTION_PER_TIME * game_framework.frame_time) % 8
         boy.x += boy.velocity * game_framework.frame_time
         boy.x = clamp(25, boy.x, 1600 - 25)
@@ -130,12 +130,9 @@ class SleepState:
             boy.image.clip_composite_draw(int(boy.frame) * 100, 200, 100, 100, -3.141592 / 2, '', boy.x + 25, boy.y - 25, 100, 100)
 
 
-
-
-
-
 next_state_table = {
-    IdleState: {RIGHT_UP: RunState, LEFT_UP: RunState, RIGHT_DOWN: RunState, LEFT_DOWN: RunState, SLEEP_TIMER: SleepState, SPACE: IdleState},
+    IdleState: {RIGHT_UP: RunState, LEFT_UP: RunState, RIGHT_DOWN: RunState,
+                LEFT_DOWN: RunState, SLEEP_TIMER: SleepState, SPACE: IdleState},
     RunState: {RIGHT_UP: IdleState, LEFT_UP: IdleState, LEFT_DOWN: IdleState, RIGHT_DOWN: IdleState, SPACE: RunState},
     SleepState: {LEFT_DOWN: RunState, RIGHT_DOWN: RunState, LEFT_UP: RunState, RIGHT_UP: RunState, SPACE: IdleState}
 }
@@ -155,6 +152,7 @@ class Boy:
         self.cur_state.enter(self, None)
 
         # for jump
+        self.is_jumping = False
         self.curr_jumping_height = 0
 
     def get_bb(self):
@@ -162,7 +160,12 @@ class Boy:
         return self.x - 50, self.y - 50, self.x + 50, self.y + 50
 
     def jump(self):
+        self.curr_jumping_height = self.curr_jumping_height
         pass
+
+    def fire_ball(self):
+        ball = Ball(self.x, self.y, self.dir * RUN_SPEED_PPS * 10)
+        game_world.add_object(ball, 1)
 
     def add_event(self, event):
         self.event_que.insert(0, event)

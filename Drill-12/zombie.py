@@ -41,10 +41,12 @@ class Zombie:
         self.x, self.y = self.patrol_positions[0]
 
         self.load_images()
+        self.font = load_font('ENCR10B.TTF', 25)
         self.dir = random.random()*2*math.pi # random moving direction
         self.speed = 0
         self.timer = 1.0  # change direction every 1 sec when wandering
         self.frame = 0
+        self.hp = 100
         self.build_behavior_tree()
 
     def calculate_current_position(self):
@@ -67,15 +69,18 @@ class Zombie:
         return BehaviorTree.SUCCESS
         pass
 
-    def find_player(self):
+    def determine_next_position_to_player(self):
         # fill here
         boy = main_state.get_boy()
         distance = (boy.x - self.x) ** 2 + (boy.y - self.y) ** 2
 
-        if distance < (PIXEL_PER_METER * 10) ** 2:
-            self.dir = math.atan2(boy.y - self.y, boy.x - self.x)
-            return BehaviorTree.SUCCESS
-
+        if distance < (PIXEL_PER_METER * 8) ** 2:
+            if self.is_more_hp_than_player() is True:
+                self.dir = math.atan2(boy.y - self.y, boy.x - self.x)
+                return BehaviorTree.SUCCESS
+            else:
+                self.speed = 0
+                return BehaviorTree.FAIL
         else:
             self.speed = 0
             return BehaviorTree.FAIL
@@ -87,6 +92,14 @@ class Zombie:
         self.calculate_current_position()
 
         return BehaviorTree.SUCCESS
+        pass
+
+    def is_more_hp_than_player(self):
+        boy = main_state.get_boy()
+        if boy.hp < self.hp:
+            return True
+        else:
+            return False
         pass
 
     def get_next_position(self):
@@ -132,15 +145,25 @@ class Zombie:
         # self.bt = BehaviorTree(chase_node)
 
         # 4 - Chase and Wander
-        wander_node = LeafNode("Wander", self.wander)
-        find_player_node = LeafNode("Find Player", self.find_player)
-        move_to_player_node = LeafNode("Move to Player", self.move_to_player)
-        chase_node = SequenceNode("Chase")
-        chase_node.add_children(find_player_node, move_to_player_node)
-        wander_chase_node = SelectorNode("WanderChase")
-        wander_chase_node.add_children(chase_node, wander_node)
-        self.bt = BehaviorTree(wander_chase_node)
+        # wander_node = LeafNode("Wander", self.wander)
+        # find_player_node = LeafNode("Find Player", self.find_player)
+        # move_to_player_node = LeafNode("Move to Player", self.move_to_player)
+        # chase_node = SequenceNode("Chase")
+        # chase_node.add_children(find_player_node, move_to_player_node)
+        # wander_chase_node = SelectorNode("WanderChase")
+        # wander_chase_node.add_children(chase_node, wander_node)
+        # self.bt = BehaviorTree(wander_chase_node)
 
+        determine_next_position_to_player_node = \
+            LeafNode("Determine next position to player", self.determine_next_position_to_player)
+        move_to_player_node = LeafNode("Move to Player", self.move_to_player)
+        chase_node = SequenceNode("Chase Player")
+        chase_node.add_children(determine_next_position_to_player_node, move_to_player_node)
+        self.bt = BehaviorTree(chase_node)
+
+        # chase_player_node = SequenceNode("Chase Player")
+
+        # run_away_from_the_player = SequenceNode("Run away from the player")
         pass
 
     def get_bb(self):
@@ -162,6 +185,9 @@ class Zombie:
                 Zombie.images['Idle'][int(self.frame)].draw(self.x, self.y, 100, 100)
             else:
                 Zombie.images['Walk'][int(self.frame)].draw(self.x, self.y, 100, 100)
+
+        self.font.draw(self.x - 50, self.y + 60, 'Hp:%3d' % self.hp, (255, 0, 0))
+        pass
 
     def handle_event(self, event):
         pass

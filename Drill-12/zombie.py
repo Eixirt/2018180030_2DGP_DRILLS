@@ -32,13 +32,9 @@ class Zombie:
 
     def __init__(self):
         # positions for origin at top, left
-        positions = [(43, 750), (1118, 750), (1050, 530), (575, 220), (235, 33), (575, 220), (1050, 530), (1118, 750)]
-        self.patrol_positions = []
-        for p in positions:
-            self.patrol_positions.append((p[0], 1024 - p[1]))  # convert for origin at bottom, left
-        self.patrol_order = 1
+
         self.target_x, self.target_y = None, None
-        self.x, self.y = self.patrol_positions[0]
+        self.x, self.y = random.randint(200, 1000), random.randint(200, 1000)
 
         self.load_images()
         self.font = load_font('ENCR10B.TTF', 25)
@@ -81,6 +77,18 @@ class Zombie:
             else:
                 self.speed = 0
                 return BehaviorTree.FAIL
+        else:
+            self.speed = 0
+            return BehaviorTree.FAIL
+        pass
+
+    def determine_next_position_to_escape(self):
+        boy = main_state.get_boy()
+        distance = (boy.x - self.x) ** 2 + (boy.y - self.y) ** 2
+
+        if distance < (PIXEL_PER_METER * 8) ** 2:
+            self.dir = math.atan2(self.y - boy.y, self.x - boy.x)
+            return BehaviorTree.SUCCESS
         else:
             self.speed = 0
             return BehaviorTree.FAIL
@@ -159,7 +167,16 @@ class Zombie:
         move_to_player_node = LeafNode("Move to Player", self.move_to_player)
         chase_node = SequenceNode("Chase Player")
         chase_node.add_children(determine_next_position_to_player_node, move_to_player_node)
-        self.bt = BehaviorTree(chase_node)
+
+        determine_next_position_to_escape_node = \
+            LeafNode("Determine next position to escape", self.determine_next_position_to_escape)
+        move_to_escape_node = LeafNode("Move to escape", self.move_to_player)
+        run_away_node = SequenceNode("Run away player")
+        run_away_node.add_children(determine_next_position_to_escape_node, move_to_escape_node)
+
+        chase_or_escape_node = SelectorNode("Chase or Escape")
+        chase_or_escape_node.add_children(chase_node, run_away_node)
+        self.bt = BehaviorTree(chase_or_escape_node)
 
         # chase_player_node = SequenceNode("Chase Player")
 

@@ -88,6 +88,12 @@ def update():
             balls.remove(ball)
             game_world.remove_object(ball)
 
+    if collide(zombie, boy):
+        if zombie.hp <= boy.hp:
+            game_world.remove_object(zombie)
+        else:
+            game_framework.quit()
+    pass
 
 def draw():
     clear_canvas()

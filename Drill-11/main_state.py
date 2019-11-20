@@ -138,7 +138,7 @@ def update():
             pass
         elif boy.starting_pos_y == brick.get_bb()[3] + 100 / 2 - 3 and boy.jumping_height >= 0:
             boy.init_jump()
-            boy.y += 4 
+            boy.y += 4
             boy.starting_pos_y = 90
             boy.jump()
             pass

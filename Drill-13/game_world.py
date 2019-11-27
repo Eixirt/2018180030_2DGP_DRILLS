@@ -4,7 +4,6 @@ import pickle
 # layer 1: Foreground Objects
 objects = [[], []]
 
-
 def add_object(o, layer):
     objects[layer].append(o)
 
@@ -44,3 +43,4 @@ def load():
     global objects
     with open('game.sav', 'rb') as f:
         objects = pickle.load(f)
+

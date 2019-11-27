@@ -129,6 +129,7 @@ class Boy:
         self.cur_state = WalkingState
         self.cur_state.enter(self, None)
         self.start_time = get_time()
+        self.time = 0
 
     def __getstate__(self):
         # fill here
@@ -156,6 +157,7 @@ class Boy:
         self.event_que.insert(0, event)
 
     def update(self):
+        self.time = get_time() - self.start_time
         self.cur_state.do(self)
         if len(self.event_que) > 0:
             event = self.event_que.pop()

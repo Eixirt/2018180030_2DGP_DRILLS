@@ -72,6 +72,7 @@ def update():
     # check
     for zombie in zombie_list:
         if collide(boy, zombie):
+            ranking_state.curr_data = boy.time
             game_framework.change_state(ranking_state)
     pass
 

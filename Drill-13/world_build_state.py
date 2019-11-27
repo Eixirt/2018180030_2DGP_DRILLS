@@ -21,10 +21,12 @@ name = "WorldBuildState"
 menu = None
 
 def enter():
-    global menu
+    global menu, zombie_list
     menu = load_image('menu.png')
     hide_cursor()
     hide_lattice()
+
+    zombie_list.clear()
 
 def exit():
     global menu

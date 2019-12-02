@@ -10,8 +10,11 @@ from boy import Boy
 # fill here
 from background import FixedBackground as Background
 
+import ball
+
 name = "MainState"
 
+balls = []
 boy = None
 background = None
 
@@ -47,6 +50,12 @@ def enter():
     background.set_center_object(boy)
     boy.set_background(background)
 
+    global balls
+    balls = [ball.Ball() for i in range(100 + 1)]
+    game_world.add_objects(balls, 1)
+
+    pass
+
 
 def exit():
     game_world.clear()
@@ -74,6 +83,13 @@ def update():
     for game_object in game_world.all_objects():
         game_object.update()
 
+    # 충돌체크
+    for soccer_ball in balls:
+        if collide(boy, soccer_ball):
+            boy.holding_balls += 1
+            balls.remove(soccer_ball)
+            game_world.remove_object(soccer_ball)
+    pass
 
 def draw():
     clear_canvas()

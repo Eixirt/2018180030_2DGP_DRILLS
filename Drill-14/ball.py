@@ -9,18 +9,17 @@ class Ball:
     def __init__(self):
         if Ball.image is None:
             Ball.image = load_image('ball41x41.png')
-        self.x= random.randint(0 + 100, main_state.background.canvas_width - 100)
-
-        self.y = random.randint(0 + 100, main_state.background.canvas_height - 100)
+        self.x = random.randint(0 + 50, main_state.background.w - 50)
+        self.y = random.randint(0 + 50, main_state.background.h - 50)
 
     def get_bb(self):
         # fill here
         return self.x - 20, self.y - 20, self.x + 20, self.y + 20
 
     def draw(self):
-        self.image.draw(self.x, self.y)
+        cx, cy = self.x - main_state.boy.bg.window_left, self.y - main_state.boy.bg.window_bottom
+        self.image.draw(cx, cy)
         # fill here for draw
-        # draw_rectangle(*self.get_bb())
 
     def update(self):
         pass

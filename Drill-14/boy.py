@@ -122,9 +122,10 @@ class Boy:
         self.event_que = []
         self.cur_state = WalkingState
         self.cur_state.enter(self, None)
+        self.holding_balls = 0
 
     def get_bb(self):
-        return self.x - 50, self.y - 50, self.x + 50, self.y + 50
+        return self.x - 30, self.y - 30, self.x + 30, self.y + 30
 
 
     def set_background(self, bg):
@@ -145,6 +146,9 @@ class Boy:
 
     def draw(self):
         self.cur_state.draw(self)
+        cx, cy = self.x - self.bg.window_left, self.y - self.bg.window_bottom
+        self.font.draw(cx - 25, cy + 50, '(%3d)' % self.holding_balls, (0, 255, 255))
+
         self.font.draw(self.canvas_width//2 - 60, self.canvas_height//2 + 50, '(%5d, %5d)' % (self.x, self.y), (255, 255, 0))
 
     def handle_event(self, event):
